@@ -1,0 +1,22 @@
+[project]
+name = "fad"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "brhenri-mr",email = "superbr55@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "freesimplegui (>=5.1.1,<6.0.0)",
+    "pytest (>=8.3.4,<9.0.0)",
+    "pillow (>=11.1.0,<12.0.0)",
+    "cx-freeze (>=7.2.10,<8.0.0)",
+    "matplotlib (>=3.10.0,<4.0.0)",
+    "shapely (>=2.0.7,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
