@@ -2,6 +2,9 @@ from fad.utils  import tensaoArmadura, drawSectionT, draw_figure
 from fad.models import Elemento
 import FreeSimpleGUI as sg
 from PIL import Image
+import os
+import pickle
+from copy import deepcopy
 
 sg.theme('Reddit')
 #sg.theme('SystemDefault')
@@ -63,7 +66,8 @@ layout_tab3 = [[sg.Canvas(key="-COMBMIN-")],]
 
 
 # All the stuff inside your window.
-layout = [  [sg.Frame('Dados de Entrada',layout_entradas),
+layout = [ [sg.Menu([['Arquivo', ['Open', 'Save', 'About']]])],
+    [sg.Frame('Dados de Entrada',layout_entradas),
              sg.Column([
                         [sg.TabGroup([[sg.Tab('Dados', layout_tab1),
                                     sg.Tab('Mmáx', layout_tab2),
@@ -90,13 +94,47 @@ while True:
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
 
+
+    if event == 'Open':
+        open_path = sg.popup_get_file("", no_window=True, file_types=(("FAD Files", "*.fad"), ("Todos os arquivos", "*.*")))
+
+        # Verificando se há um caminho
+        if open_path:
+            with open(open_path, 'rb') as arquivo:
+                open_input = pickle.load(arquivo)
+
+            # Carregando os valores salvos
+            window.fill(open_input)
+
+    elif event == 'Save':
+        save_path = sg.popup_get_file("Salvar como:", no_window=True, save_as=True, default_extension=".fad")
+
+        # Conferindo o caminho existente
+        if save_path:
+
+            # Removendo valores que causam problemas
+            values_output = deepcopy(values)
+            values_output.pop('-COMBMAX-')
+            values_output.pop('-COMBMIN-')
+            values_output.pop(1)
+            values_output.pop(0)
+
+            with open(save_path, 'wb') as arquivo:
+                pickle.dump(values_output, arquivo)
+            sg.popup('Arquiv salvo com sucesso', )
+
+
+    elif event == 'About':
+        sg.popup("Valores salvos:\nValor 1: {values['-VALOR1-']}\nValor 2: {values['-VALOR2-']}")
+
+
     calcular = not '' in values.values()
     if event == 'Calcular' and calcular:
-
+        print(values)
         # Verificação de letras nos campos
         for chave, field_valor in values.items():
             try:
-                if chave not in['-POND-', '-COMBO-', '-COMBMAX-', '-COMBMIN-', 0] and isinstance(field_valor, str):
+                if chave not in['-POND-', '-COMBO-', '-COMBMAX-', '-COMBMIN-', 0, 1] and isinstance(field_valor, str):
 
                     float(field_valor.replace(',','.')) # Froçando o erro
 
@@ -107,7 +145,7 @@ while True:
 
         # Verificando se algum valor geométrico está negativo
         for field_valor in ['-BW-','-BF-', '-H-', '-HF-', '-S-', '-I-', '-QSUP-', '-QINF-']:
-            if '-' in field_valor:
+            if '-' in values[field_valor]:
                 sg.popup("As propriedades geométricas devem ser valores positivos.", title="Aviso")
                 erro = True
                 break
