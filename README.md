@@ -2,7 +2,7 @@
 
 Simples fatigue calculator for bridge slab or rectangular beam. The project aims to verify the additional gradient of tension of the reinforcement bar induced by moment. To ensure the simplice, The calculator were made with a GUI 
 
-## Instalation
+## Installation
 To install the project, install all the dependency on `pyproject.toml` and install the project:
 
 ```
