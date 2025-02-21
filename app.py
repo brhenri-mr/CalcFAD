@@ -78,7 +78,13 @@ layout = [ [sg.Menu([['Arquivo', ['Open', 'Save', 'About']]])],
              ],
             [sg.Button('Calcular', bind_return_key=True), sg.Button('Cancel')]]
 
-
+layout_about = [
+    [sg.Text("Sobre o Programa", font=("Arial", 14, "bold"))],
+    [sg.Text("Programa para análise de fadiga (NBR 6118:2023 e Marchetti (2008)) induzida por flexão em elementos lineares ou simplificadamente lineares (lajes).", size=(55, 2))],
+    [sg.Text("Versão: 1.0")],
+    [sg.Text("Desenvolvido por: Breno Henrique Mariano Rodrigues")],
+    [sg.Text("github: https://github.com/brhenri-mr/CalcFAD")]
+]
 
 # Create the Window
 window = sg.Window('Calculadora Fadiga', layout, icon='Equibris.ico')
@@ -125,7 +131,15 @@ while True:
 
 
     elif event == 'About':
-        sg.popup("Valores salvos:\nValor 1: {values['-VALOR1-']}\nValor 2: {values['-VALOR2-']}")
+        # Criando a nova janela
+        new_window = sg.Window('Nova Janela', layout_about)
+            
+        # Loop para a nova janela
+        while True:
+            event2, values2 = new_window.read()
+            if event2 == sg.WIN_CLOSED or event2 == 'Fechar':
+                break
+        new_window.close()
 
 
     calcular = not '' in values.values()
