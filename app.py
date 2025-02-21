@@ -88,13 +88,12 @@ layout_about = [
 
 # Create the Window
 window = sg.Window('Calculadora Fadiga', layout, icon='Equibris.ico')
-fig_canvas_agg = None  # Inicializa sem o gráfico
+fig_canvas_agg = []  # Inicializa sem o gráfico
 
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     erro = False
     event, values = window.read()
-    fig_canvas_agg = None  # Inicializa sem o gráfico
 
     # if user closes window or clicks cancel
     if event == sg.WIN_CLOSED or event == 'Cancel':
@@ -144,97 +143,103 @@ while True:
 
     calcular = not '' in values.values()
     if event == 'Calcular' and calcular:
-        print(values)
-        # Verificação de letras nos campos
-        for chave, field_valor in values.items():
-            try:
-                if chave not in['-POND-', '-COMBO-', '-COMBMAX-', '-COMBMIN-', 0, 1] and isinstance(field_valor, str):
-
-                    float(field_valor.replace(',','.')) # Froçando o erro
-
-            except:
-                sg.popup("Os campos devem ser preenchidos com números.", title="Aviso")
-                erro = True
-                break
-
-        # Verificando se algum valor geométrico está negativo
-        for field_valor in ['-BW-','-BF-', '-H-', '-HF-', '-S-', '-I-', '-QSUP-', '-QINF-']:
-            if '-' in values[field_valor]:
-                sg.popup("As propriedades geométricas devem ser valores positivos.", title="Aviso")
-                erro = True
-                break
-        
-        if erro:
-            pass
-
-        # Verificando se as barras são númeor inteiros
-        elif '.' in values['-QSUP-'] or '.' in values['-QINF-']:
-            sg.popup("A quantidade de Barras precisa ser um número inteiro.", title="Aviso")
-
-
-        else:
-            # Instancia do objeto
-            element = Elemento(fck='C30',
-                        descricao=values['-COMBO-'],
-                        bitolas=values['-øINF-'],
-                        bitolai=values['-øSUP-'],
-                        bw =float(values['-BW-'].replace(',','.')),
-                        bf= float(values['-BF-'].replace(',','.')),
-                        h=float(values['-H-'].replace(',','.')),
-                        hf=float(values['-HF-'].replace(',','.')),
-                        i=float(values['-I-'].replace(',','.')),
-                        s=float(values['-S-'].replace(',','.')),
-                        bitolainf=values['-øINF-'],
-                        bitolasup=values['-øSUP-'],
-                        qdntsup=float(values['-QSUP-'].replace(',','.')),
-                        qndtinf=float(values['-QINF-'].replace(',','.')))
-
-
-
-            # Construindo os carregamentos
-            momento_max_comb = float(values['-MG-'].replace(',','.')) + POD[values['-POND-']]*float(values['-M+-'].replace(',','.'))
-            momento_min_comb = float(values['-MG-'].replace(',','.')) + POD[values['-POND-']]*float(values['-M--'].replace(',','.'))
-            print(momento_max_comb, momento_max_comb)
-            tensao = [element.tensaoConcreto(momento) for momento in [momento_max_comb, momento_min_comb]]
-            
-            deltatensao = [tensaoArmadura(sigmac=tensao[0], 
-                                          sigmacmin=tensao[1], 
-                                          d_max=element.d_posi if momento_max_comb>=0 else element.d_neg, 
-                                          d_min=element.d_posi if momento_min_comb>=0 else element.d_neg,
-                                          dlinha_min=element.dlinha_posi if momento_min_comb>=0 else element.dlinha_neg,
-                                          dlinha_max=element.dlinha_posi if momento_max_comb>=0 else element.dlinha_neg, 
-                                          x_max= element.x_posi if momento_max_comb>=0 else element.x_neg, 
-                                          x_min=element.x_posi if momento_min_comb>=0 else element.x_neg,
-                                          ae=element.ae, 
-                                          TYPE=tipo) for tipo in ['Inferior', 'Superior']]
-
-            # Atualizando os valores na tela
-            resis_sup = element.fss # Acressimo toleravel  a fadiga superior
-            resis_inf = element.fsi # Acressimo toleravel a fadiga inferior
-
-
-            sup_token = '>' if resis_sup<deltatensao[1] else '<'
-            inf_token = '>' if resis_inf<deltatensao[0] else '<'
-
-            verificado_sup = 'Não Verificado' if resis_sup<deltatensao[1] else 'Verificado'
-            verificado_inf = 'não Verificado' if resis_inf<deltatensao[0] else 'Verificado'
-
-
-            window['-TSUP-'].update(f'Situação das armaduras superiores: {round(deltatensao[1], 2)}{sup_token}{resis_sup} MPa --> {verificado_sup}')
-            window['-TINF-'].update(f'Situação das armaduras inferiores: {round(deltatensao[0], 2)}{inf_token}{resis_inf} MPa --> {verificado_inf}' )
-            if fig_canvas_agg:
-                    fig_canvas_agg.get_tk_widget().forget()
-
-            for x, comb, sinal in [(element.x_posi, "-COMBMAX-", abs(momento_max_comb)/momento_max_comb),(element.x_neg, "-COMBMIN-", abs(momento_min_comb)/momento_min_comb)]:
-
-                canvas_elem = window[comb].Widget
-                print(sinal)
-                figura = drawSectionT(bw=element.bw, bf=element.b, h=element.h, hf=element.hf, x= x, momento=sinal)
-
+        try:
+            # Verificação de letras nos campos
+            for chave, field_valor in values.items():
                 try:
-                    fig_canvas_agg  = draw_figure(canvas=canvas_elem, figure=figura)
+                    if chave not in['-POND-', '-COMBO-', '-COMBMAX-', '-COMBMIN-', 0, 1] and isinstance(field_valor, str):
+
+                        float(field_valor.replace(',','.')) # Froçando o erro
+
                 except:
-                    print('Erro ao tentar desenhar a seção')
+                    sg.popup("Os campos devem ser preenchidos com números.", title="Aviso")
+                    erro = True
+                    break
+
+            # Verificando se algum valor geométrico está negativo
+            for field_valor in ['-BW-','-BF-', '-H-', '-HF-', '-S-', '-I-', '-QSUP-', '-QINF-']:
+                if '-' in values[field_valor]:
+                    sg.popup("As propriedades geométricas devem ser valores positivos.", title="Aviso")
+                    erro = True
+                    break
+            
+            if erro:
+                pass
+
+            # Verificando se as barras são númeor inteiros
+            elif '.' in values['-QSUP-'] or '.' in values['-QINF-']:
+                sg.popup("A quantidade de Barras precisa ser um número inteiro.", title="Aviso")
+
+
+            else:
+                # Instancia do objeto
+                element = Elemento(fck='C30',
+                            descricao=values['-COMBO-'],
+                            bitolas=values['-øINF-'],
+                            bitolai=values['-øSUP-'],
+                            bw =float(values['-BW-'].replace(',','.')),
+                            bf= float(values['-BF-'].replace(',','.')),
+                            h=float(values['-H-'].replace(',','.')),
+                            hf=float(values['-HF-'].replace(',','.')),
+                            i=float(values['-I-'].replace(',','.')),
+                            s=float(values['-S-'].replace(',','.')),
+                            bitolainf=values['-øINF-'],
+                            bitolasup=values['-øSUP-'],
+                            qdntsup=float(values['-QSUP-'].replace(',','.')),
+                            qndtinf=float(values['-QINF-'].replace(',','.')))
+
+
+
+                # Construindo os carregamentos
+                momento_max_comb = float(values['-MG-'].replace(',','.')) + POD[values['-POND-']]*float(values['-M+-'].replace(',','.'))
+                momento_min_comb = float(values['-MG-'].replace(',','.')) + POD[values['-POND-']]*float(values['-M--'].replace(',','.'))
+
+                tensao = [element.tensaoConcreto(momento) for momento in [momento_max_comb, momento_min_comb]]
+                
+                deltatensao = [tensaoArmadura(sigmac=tensao[0], 
+                                            sigmacmin=tensao[1], 
+                                            d_max=element.d_posi if momento_max_comb>=0 else element.d_neg, 
+                                            d_min=element.d_posi if momento_min_comb>=0 else element.d_neg,
+                                            dlinha_min=element.dlinha_posi if momento_min_comb>=0 else element.dlinha_neg,
+                                            dlinha_max=element.dlinha_posi if momento_max_comb>=0 else element.dlinha_neg, 
+                                            x_max= element.x_posi if momento_max_comb>=0 else element.x_neg, 
+                                            x_min=element.x_posi if momento_min_comb>=0 else element.x_neg,
+                                            ae=element.ae, 
+                                            TYPE=tipo) for tipo in ['Inferior', 'Superior']]
+
+                # Atualizando os valores na tela
+                resis_sup = element.fss # Acressimo toleravel  a fadiga superior
+                resis_inf = element.fsi # Acressimo toleravel a fadiga inferior
+
+                sup_token = '>' if resis_sup<deltatensao[1] else '<'
+                inf_token = '>' if resis_inf<deltatensao[0] else '<'
+
+                verificado_sup = 'Não Verificado' if resis_sup<deltatensao[1] else 'Verificado'
+                verificado_inf = 'não Verificado' if resis_inf<deltatensao[0] else 'Verificado'
+
+
+                window['-TSUP-'].update(f'Situação das armaduras superiores: {round(deltatensao[1], 2)}{sup_token}{resis_sup} MPa --> {verificado_sup}')
+                window['-TINF-'].update(f'Situação das armaduras inferiores: {round(deltatensao[0], 2)}{inf_token}{resis_inf} MPa --> {verificado_inf}' )
+
+                # Apagando gráfico anterior
+                if len(fig_canvas_agg) != 0:
+                        for fig_canvas in fig_canvas_agg:
+                            fig_canvas.get_tk_widget().forget()
+
+                # Desenhando as seções T para combinação máxima e mínima 
+                for x, comb, sinal in [(element.x_posi, "-COMBMAX-", abs(momento_max_comb)/momento_max_comb),(element.x_neg, "-COMBMIN-", abs(momento_min_comb)/momento_min_comb)]:
+                    
+                    # Inicializando os objetos
+                    canvas_elem = window[comb].Widget # recuperando o canvas
+                    figura = drawSectionT(bw=element.bw, bf=element.b, h=element.h, hf=element.hf, x= x, momento=sinal) # Desenhando a seção
+
+                    try:
+                        fig_canvas_agg.append(draw_figure(canvas=canvas_elem, figure=figura)) # Aplicando a seção ao canvas 
+
+                    except:
+                        print('Erro ao tentar desenhar a seção')
+        except Exception as e:
+            sg.popup(f'Um erro ocorreu, favor reportar {e}')
 
 window.close()
 
