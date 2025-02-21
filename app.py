@@ -75,7 +75,7 @@ layout = [ [sg.Menu([['Arquivo', ['Open', 'Save', 'About']]])],
                                     sg.Tab('Mmáx', layout_tab2),
                                     sg.Tab('Mmín', layout_tab3),
                                     ]])],
-                        [sg.Frame('Resultados', layout_resultados, vertical_alignment='top', size=(466, 155))]
+                        [sg.Frame('Resultados', layout_resultados, vertical_alignment='top', size=(466, 120))]
                         ], vertical_alignment='top' )
              ],
             [sg.Button('Calcular', bind_return_key=True), sg.Button('Cancel')]]
@@ -197,8 +197,10 @@ while True:
                 momento_max_comb = float(values['-MG-'].replace(',','.')) + POD[values['-POND-']]*float(values['-M+-'].replace(',','.'))
                 momento_min_comb = float(values['-MG-'].replace(',','.')) + POD[values['-POND-']]*float(values['-M--'].replace(',','.'))
 
+                # Calculo da tensão no concreto
                 tensao = [element.tensaoConcreto(momento) for momento in [momento_max_comb, momento_min_comb]]
                 
+                # Calculo do gradiente de tensão nas armaduras
                 deltatensao = [tensaoArmadura(sigmac=tensao[0], 
                                             sigmacmin=tensao[1], 
                                             d_max=element.d_posi if momento_max_comb>=0 else element.d_neg, 

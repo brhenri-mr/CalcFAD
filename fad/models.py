@@ -147,9 +147,11 @@ class Elemento(NBR6118):
         self.x_posi = self.am_posi*(-1 + sqrt(1 + 2*self.d0_posi/self.am_posi)) # Altura útil inicial
 
         # Seção T
-        if self.x_posi >self.hf:
+        if self.x_posi > self.hf:
+            
             self.acolaborante = (self.b - self.bw)*self.hf/self.ae
             self.d0_posi = (self.ainf*self.d_posi + self.asup*self.dlinha_posi + self.acolaborante*self.hf/2)/(self.ainf + self.asup + self.acolaborante) # Altura útil média
+
             self.am_posi = self.ae*(self.ainf + self.asup + self.acolaborante)/self.bw # 
             self.x_posi = self.am_posi*(-1 + sqrt(1 + 2*self.d0_posi/self.am_posi)) # Altura útil inicial
         

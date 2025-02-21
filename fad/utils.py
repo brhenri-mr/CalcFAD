@@ -29,12 +29,12 @@ def tensaoArmadura(sigmac:float,
 
     # Diferenciando entre posição da armadura
     if TYPE == 'Inferior':
-        tension_max = ae*sigmac*(d_max-x_max)/x_max # Tensão máxima 
-        tension_min = ae*sigmacmin*(d_min-x_min)/x_min # Tensão mínima 
+        tension_max = ae*sigmac*(d_max - x_max)/x_max # Tensão máxima 
+        tension_min = ae*sigmacmin*(d_min - x_min)/x_min # Tensão mínima 
 
     else: 
-        tension_max = ae*sigmac*(x_max-dlinha_max)/x_max # Tensão máxima 
-        tension_min = ae*sigmacmin*(x_min-dlinha_min)/x_min # Tensão mínima 
+        tension_max = ae*sigmac*(x_max - dlinha_max)/x_max # Tensão máxima 
+        tension_min = ae*sigmacmin*(x_min - dlinha_min)/x_min # Tensão mínima 
 
     return (tension_max - tension_min)*10
 
