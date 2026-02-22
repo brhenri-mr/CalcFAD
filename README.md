@@ -7,11 +7,6 @@
 ![PySimpleGUI](https://img.shields.io/badge/GUI-PySimpleGUI-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-## About
-
-Calculates the additional stress gradient on reinforcement bars induced by 
-live load moments, verifying fatigue limits for rectangular beams and bridge 
-slabs. Built with a desktop GUI for practical field use.
 
 ## Features
 
