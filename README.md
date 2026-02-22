@@ -1,16 +1,46 @@
-# Objetivo
+# CalcFAD — Fatigue Calculator for RC Elements
 
-Simples fatigue calculator for bridge slab or rectangular beam. The project aims to verify the additional gradient of tension of the reinforcement bar induced by moment. To ensure the simplice, The calculator were made with a GUI 
+> Python desktop application for fatigue verification of reinforced concrete 
+> beams and bridge slabs, following NBR 6118:2023 (Annex 23).
+
+![Python](https://img.shields.io/badge/Python-3.x-blue)
+![PySimpleGUI](https://img.shields.io/badge/GUI-PySimpleGUI-orange)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+## About
+
+Calculates the additional stress gradient on reinforcement bars induced by 
+live load moments, verifying fatigue limits for rectangular beams and bridge 
+slabs. Built with a desktop GUI for practical field use.
+
+## Features
+
+- Fatigue verification per NBR 6118:2023 (Annex 23)
+- Supports rectangular beams and T-sections (bridge slabs)
+- Desktop GUI via PySimpleGUI
+- Modular architecture (models + utils)
+- Unit tests included
+
 
 ## Installation
-To install the project, install all the dependency on `pyproject.toml` and install the project:
-
-```
+```bash
+git clone https://github.com/brhenri-mr/CalcFAD
+cd CalcFAD
 python instalar.py build
 ```
 
-# Glossary
+## Input Parameters
 
+| Parameter | Description |
+|-----------|-------------|
+| M+ / M-   | Max/min live moments (weighted) |
+| Mg        | Standard moment |
+| Ainf / Asup | Inferior/superior rebar area |
+| bw / bf   | Section widths |
+| h / hf    | Section height / slab thickness |
+
+
+# Glossary
 
 ## Loads
  - M+: Maximum lived moment (already weighted) applied to element 
