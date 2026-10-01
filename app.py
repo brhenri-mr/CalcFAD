@@ -2,7 +2,6 @@ from fad.utils  import tensaoArmadura, drawSectionT, draw_figure
 from fad.models import Elemento
 import FreeSimpleGUI as sg
 from PIL import Image
-import keyboard
 import pickle
 from copy import deepcopy
 
@@ -89,7 +88,9 @@ layout_about = [
 ]
 
 # Create the Window
-window = sg.Window('Calculadora Fadiga', layout, icon='Equibris.ico', return_keyboard_events=True)
+window = sg.Window('Calculadora Fadiga', layout, icon='Equibris.ico', return_keyboard_events=True, finalize=True)
+window.bind('<Control-o>', 'Open')
+window.bind('<Control-s>', 'Save')
 fig_canvas_agg = []  # Inicializa sem o gráfico
 
 # Event Loop to process "events" and get the "values" of the inputs
@@ -101,7 +102,7 @@ while True:
     if event == sg.WIN_CLOSED or event == 'Cancel':
         break
 
-    if event == 'Open' or keyboard.is_pressed('ctrl+o'):
+    if event == 'Open':
         open_path = sg.popup_get_file("", no_window=True, file_types=(("FAD Files", "*.fad"), ("Todos os arquivos", "*.*")))
 
         # Verificando se há um caminho
@@ -114,7 +115,7 @@ while True:
             window.set_title(open_path.split('/')[-1].replace('.fad',''))
             save_path = open_path
 
-    elif event == 'Save' or keyboard.is_pressed('ctrl+s'):
+    elif event == 'Save':
 
         if not save_path:
             save_path = sg.popup_get_file("Salvar como:", no_window=True, save_as=True, default_extension=".fad")

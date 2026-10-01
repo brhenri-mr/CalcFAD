@@ -1,18 +1,19 @@
 import sys
 from cx_Freeze import setup, Executable
 
-base = "Win32GUI" if sys.platform == "win32" else None
-
-executables = [
-    Executable(
+if sys.platform == "win32":
+    executable = Executable(
         "app.py",
-        base=base,
+        base="Win32GUI",
         icon="Equibris.ico",
     )
-]
+else:
+    executable = Executable(
+        "app.py",
+    )
 
 setup(
     name="Equibris",
     version="1.0",
-    executables=executables,
+    executables=[executable],
 )
