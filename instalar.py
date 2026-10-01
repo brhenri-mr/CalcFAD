@@ -1,9 +1,18 @@
+import sys
 from cx_Freeze import setup, Executable
 
+base = "Win32GUI" if sys.platform == "win32" else None
+
+executables = [
+    Executable(
+        "app.py",
+        base=base,
+        icon="Equibris.ico",
+    )
+]
+
 setup(
-    name="Calculadora fadiga",
-    version="0.1",
-    description="Descrição do meu programa",
-    options={"build_exe": {"include_files": ["T.png"]}},
-    executables=[Executable("app.py", base="Win32GUI", icon='Equibris.ico')]
+    name="Equibris",
+    version="1.0",
+    executables=executables,
 )
