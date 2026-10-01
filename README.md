@@ -7,6 +7,8 @@
 ![PySimpleGUI](https://img.shields.io/badge/GUI-PySimpleGUI-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+![CalcFAD interface](docs/interface.png)
+
 
 ## Features
 
