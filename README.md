@@ -21,6 +21,7 @@
 ```bash
 git clone https://github.com/brhenri-mr/CalcFAD
 cd CalcFAD
+poetry install
 python instalar.py build
 ```
 
